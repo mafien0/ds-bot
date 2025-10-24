@@ -16,38 +16,21 @@ bot = commands.Bot(
     help_command=None # Remove help command, to not cause any conflicts with the custom one
 )
 
-# Commands text
-command_h = f"""```
-{c.prefix}commands:    | Prints this text
-{c.prefix}status:      | Prints if bot is alive
-```"""
-
-# On ready, print info and ping admin role
+# On ready
 @bot.event
 async def on_ready():
     print("-" * 50)
     print(f"Bot name: {bot.user.name}")
     print("-" * 50)
 
-
-# Commands
+# Cogs
 async def load_cogs():
     await bot.load_extension("cogs.info")
+    await bot.load_extension("cogs.moderation")
 
-@bot.command()
-async def ch(ctx):
-
-    embed = discord.Embed(
-        title="Commands",
-        description=command_h,
-        color=(c.color.default)
-    )
-
-    msg = await ctx.reply(embed=embed)
-
-# Actually run
+# Run
 @bot.event
 async def setup_hook():
     await load_cogs()
 
-bot.run(c.TOKEN, log_handler=handler, log_level=logging.DEBUG)
+bot.run(c.TOKEN, log_handler=handler, log_level=logging.DEBUG) # Actually run
