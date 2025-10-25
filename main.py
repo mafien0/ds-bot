@@ -5,7 +5,7 @@ import logging
 import config as c # `config.py`
 
 # Bot permissions, etc
-handler = logging.FileHandler(filename="discord.log", encoding="utf-8", mode="w")
+handler = logging.FileHandler(filename="data/discord.log", encoding="utf-8", mode="w")
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
