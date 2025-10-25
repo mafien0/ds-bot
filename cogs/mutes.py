@@ -8,7 +8,7 @@ from utils import throwError, parse_time
 
 
 
-class moderation(commands.Cog):
+class mutes(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         # start background task
@@ -26,10 +26,11 @@ class moderation(commands.Cog):
                 data = json.load(f)
         except FileNotFoundError:
             return
-
-        now = datetime.now(timezone.utc)
         changed = False
 
+        now = datetime.now(timezone.utc)
+
+        # Look for members with expired mute
         for user_id, info, in list(data.items()):
             expires = datetime.fromisoformat(info["expires"])
             if now >= expires:
@@ -54,28 +55,34 @@ class moderation(commands.Cog):
 
 
     #! Commands
-    #* Mute/Unmute
 
-    # mute
+    #* mute
     @commands.command()
     @commands.has_role(c.ADMIN_ROLE)
     async def mute(self, ctx, member: discord.Member = None, arg1: str = None, *, reason: str = None):
+        # Takes member, time(optional) and reason(optional)
 
-        # Error check
+
+        # If doesn't specify member: error
         if not member:
             await throwError(ctx, "Mute who?")
             return
 
-        # if ctx.author.id == member.id:
-        #     await throwError(ctx, "You can't mute yourself")
-        #     return
+        # If member is yourself: error
+        if ctx.author.id == member.id:
+            await throwError(ctx, "You can't mute yourself")
+            return
 
+        # If doesn't specify time: time = 10m
         if not arg1:
             arg1 = "10m"
 
+        # If doesn't specify reason: Set "No Reason"
         if not reason:
             reason = "No Reason"
 
+
+        # If everythings seems good:
         # Giving a mute role 
         mute_role = ctx.guild.get_role(c.MUTE_ROLE)
         await member.add_roles(mute_role)
@@ -92,7 +99,7 @@ class moderation(commands.Cog):
         duration = parse_time(arg1)
         expires_at = (datetime.now(timezone.utc) + duration).isoformat()
 
-        # Store it
+        # Storing it
         data[str(member.id)] = {"expires": expires_at, "reason": reason}
         with open(c.mutes_loc, "w") as f:
             json.dump(data, f, indent=4)
@@ -109,7 +116,8 @@ class moderation(commands.Cog):
         )
         await ctx.reply(embed=embed)
 
-        # Try to send user dm
+
+        # Try to send user dm to the muted one
         embed = discord.Embed(
             title="You got muted!",
             color=c.color.punishment,
@@ -125,6 +133,7 @@ class moderation(commands.Cog):
             pass
 
 
+    # Error handling
     @mute.error
     async def mute_error(self, ctx, error):
         if isinstance(error, commands.MissingRole):
@@ -133,21 +142,23 @@ class moderation(commands.Cog):
             await throwError(ctx, f"{error}")
 
 
-    # Unmute 
+
+    #* Unmute 
     @commands.command()
     @commands.has_role(c.ADMIN_ROLE)
     async def unmute(self, ctx, member: discord.Member):
 
-        # Remove role
+        # Removing mute role
         mute_role = ctx.guild.get_role(c.MUTE_ROLE)
         await member.remove_roles(mute_role)
 
-        # Remove from `mutes.json`
+        # Removing from json
         with open(c.mutes_loc, "r") as f:
             data = json.load(f)
         data.pop(str(member.id), None)
         with open (c.mutes_loc, "w") as f:
             json.dump(data, f, indent=4)
+
 
         # Feedback
         embed = discord.Embed(
@@ -182,4 +193,4 @@ class moderation(commands.Cog):
     #TODO
 
 async def setup(bot):
-    await bot.add_cog(moderation(bot))
+    await bot.add_cog(mutes(bot))

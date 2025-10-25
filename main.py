@@ -26,7 +26,7 @@ async def on_ready():
 # Cogs
 async def load_cogs():
     await bot.load_extension("cogs.info")
-    await bot.load_extension("cogs.moderation")
+    await bot.load_extension("cogs.mutes")
 
 # Run
 @bot.event
