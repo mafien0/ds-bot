@@ -12,7 +12,7 @@ async def throwError(ctx, error: str,):
     await ctx.reply(embed=embed)
 
 
-async def parse_time(time_str: str):
+def parse_time(time_str: str):
     # 2 Letters, so handled separately
     if time_str.endswith("mo"):
         num = int(time_str[:-2])

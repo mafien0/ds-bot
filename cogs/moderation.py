@@ -66,10 +66,9 @@ class moderation(commands.Cog):
             await throwError(ctx, "Mute who?")
             return
 
-
-        if ctx.author.id == member.id:
-            await throwError(ctx, "You can't mute yourself")
-            return
+        # if ctx.author.id == member.id:
+        #     await throwError(ctx, "You can't mute yourself")
+        #     return
 
         if not arg1:
             arg1 = "10m"
@@ -102,14 +101,28 @@ class moderation(commands.Cog):
         embed = discord.Embed(
             title=f"Mute",
             color=c.color.success,
-            description= (
+            description=(
                 f"Successfully muted {member.mention}\n"
                 f"**Time:** {arg1}\n"
                 f"**Reason:** {reason}"
             )
         )
         await ctx.reply(embed=embed)
-        return
+
+        # Try to send user dm
+        embed = discord.Embed(
+            title="You got muted!",
+            color=c.color.punishment,
+            description=(
+                f"**By:** {ctx.author.mention}\n"
+                f"**Time:** {arg1}\n"
+                f"**Reason:** {reason}\n"
+            )
+        )
+        try:
+            await member.send(embed=embed)
+        except:
+            pass
 
 
     @mute.error
@@ -124,15 +137,19 @@ class moderation(commands.Cog):
     @commands.command()
     @commands.has_role(c.ADMIN_ROLE)
     async def unmute(self, ctx, member: discord.Member):
+
+        # Remove role
         mute_role = ctx.guild.get_role(c.MUTE_ROLE)
         await member.remove_roles(mute_role)
 
+        # Remove from `mutes.json`
         with open(c.mutes_loc, "r") as f:
             data = json.load(f)
         data.pop(str(member.id), None)
         with open (c.mutes_loc, "w") as f:
             json.dump(data, f, indent=4)
 
+        # Feedback
         embed = discord.Embed(
             title="Unmute",
             color= c.color.success,
@@ -140,12 +157,29 @@ class moderation(commands.Cog):
         )
         await ctx.reply(embed=embed)
 
+        # Try to send user dm
+        embed = discord.Embed(
+            title="You got unmuted!",
+            color=c.color.success,
+            description=(
+                f"**By:** {ctx.author.mention}\n"
+            )
+        )
+        try:
+            await member.send(embed=embed)
+        except:
+            pass
+
+
     @unmute.error
     async def unmute_error(self, ctx, error):
         if isinstance(error, commands.MissingRole):
             await throwError(ctx, "Permission Denied")
         else:
             await throwError(ctx, f"{error}")
+
+    # Ban/Unban system
+    #TODO
 
 async def setup(bot):
     await bot.add_cog(moderation(bot))

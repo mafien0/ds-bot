@@ -27,7 +27,9 @@ class color:
     white = c.from_rgb(255, 244, 230)
     red = c.from_rgb(133, 68, 66)
     green = c.from_rgb(119, 171, 89)
+    yellow = c.from_rgb(255, 204, 92)
 
     default = white
     error = red
     success = green
+    punishment = yellow
