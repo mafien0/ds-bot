@@ -3,8 +3,11 @@ from dotenv import load_dotenv
 import os
 import json
 
+debug = True
+
 prefix = "."
 
+# File locations
 mutes_loc = "data/mutes.json"
 bans_loc = "data/bans.json"
 bans_loc = "data/bans.json"
@@ -13,13 +16,29 @@ bans_loc = "data/bans.json"
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")        # Discord bot token
 GUILD_ID = int(os.getenv("GUILD_ID"))     # Server id
-ADMIN_ROLE = int(os.getenv("ADMIN_ROLE")) # Admin role id
 MUTE_ROLE = int(os.getenv("MUTE_ROLE"))   # Role id for mutes
 
 # Commands Help text
 ch = f"""```
-{prefix}commands:    | Prints this text
-{prefix}status:      | Prints if bot is alive
+----- Base -----
+{prefix}commands    | Prints this text
+{prefix}status      | Prints if bot is alive
+
+----- Moderation -----
+{prefix}mute <@member> <time>(Optional) <reason>(Optional):
+    Mutes member for time(N+y/mo/d/h/m) with reason
+    If time doesn't specified, mute for 10m
+    If reason doesn't specified, mute for "No Reason"
+
+    Example:
+    >>> {prefix}mute @bad_guy 1d Saying bad words
+
+
+{prefix}unmute <@member>
+    opposite of {prefix}mute, removes mute from a member
+
+    Example:
+    >>> {prefix}unmute @good_guy
 ```"""
 
 # Colors config

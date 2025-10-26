@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 import json
 import config as c
-from utils import throwError, parse_time
+from utils import returnError, returnSuccess, sendDM, parseTime
 
 
 
@@ -58,19 +58,21 @@ class mutes(commands.Cog):
 
     #* mute
     @commands.command()
-    @commands.has_role(c.ADMIN_ROLE)
     async def mute(self, ctx, member: discord.Member = None, arg1: str = None, *, reason: str = None):
         # Takes member, time(optional) and reason(optional)
 
+        # Permission check
+        if not ctx.author.guild_permissions.administrator:
+            await returnError(ctx, "Permisson Denied!")
 
         # If doesn't specify member: error
         if not member:
-            await throwError(ctx, "Mute who?")
+            await returnError(ctx, "Mute who?")
             return
 
         # If member is yourself: error
         if ctx.author.id == member.id:
-            await throwError(ctx, "You can't mute yourself")
+            await returnError(ctx, "You can't mute yourself")
             return
 
         # If doesn't specify time: time = 10m
@@ -96,7 +98,7 @@ class mutes(commands.Cog):
             data = {}
 
         # Calculating unmute time
-        duration = parse_time(arg1)
+        duration = parseTime(arg1)
         expires_at = (datetime.now(timezone.utc) + duration).isoformat()
 
         # Storing it
@@ -105,48 +107,34 @@ class mutes(commands.Cog):
             json.dump(data, f, indent=4)
 
         # Feedback
-        embed = discord.Embed(
-            title=f"Mute",
-            color=c.color.success,
-            description=(
-                f"Successfully muted {member.mention}\n"
-                f"**Time:** {arg1}\n"
-                f"**Reason:** {reason}"
-            )
-        )
-        await ctx.reply(embed=embed)
-
-
-        # Try to send user dm to the muted one
-        embed = discord.Embed(
-            title="You got muted!",
-            color=c.color.punishment,
-            description=(
-                f"**By:** {ctx.author.mention}\n"
-                f"**Time:** {arg1}\n"
-                f"**Reason:** {reason}\n"
-            )
-        )
-        try:
-            await member.send(embed=embed)
-        except:
-            pass
-
+        await returnSuccess(ctx, "Mute", (
+            f"Successfully muted {member.mention}\n"
+            f"**Time:** {arg1}\n"
+            f"**Reason:** {reason}"
+        ))
+        await sendDM(member, "You got muted", (
+            f"**By:** {ctx.author.mention}\n"
+            f"**Time:** {arg1}\n"
+            f"**Reason:** {reason}\n"
+        ))
 
     # Error handling
     @mute.error
     async def mute_error(self, ctx, error):
-        if isinstance(error, commands.MissingRole):
-            await throwError(ctx, "Permission Denied")
+        if c.debug:
+            await returnError(ctx, f"{error}")
         else:
-            await throwError(ctx, f"{error}")
-
+            await returnError(ctx, "Something went wrong")
 
 
     #* Unmute 
     @commands.command()
-    @commands.has_role(c.ADMIN_ROLE)
     async def unmute(self, ctx, member: discord.Member):
+
+        # Permission check
+        if not ctx.author.guild_permissions.administrator:
+            returnError(ctx, "Permisson Denied!")
+            return
 
         # Removing mute role
         mute_role = ctx.guild.get_role(c.MUTE_ROLE)
@@ -159,38 +147,24 @@ class mutes(commands.Cog):
         with open (c.mutes_loc, "w") as f:
             json.dump(data, f, indent=4)
 
-
         # Feedback
-        embed = discord.Embed(
-            title="Unmute",
-            color= c.color.success,
-            description=f"Succefully unmuted {member.mention}"
-        )
-        await ctx.reply(embed=embed)
-
-        # Try to send user dm
-        embed = discord.Embed(
-            title="You got unmuted!",
-            color=c.color.success,
-            description=(
-                f"**By:** {ctx.author.mention}\n"
-            )
-        )
-        try:
-            await member.send(embed=embed)
-        except:
-            pass
+        await returnSuccess(ctx, "Unmute", (
+            f"Succefully unmuted {member.mention}"
+        ))
+        await sendDM(member, "You got unmuted", (
+            f"**By:** {ctx.author.mention}\n"
+        ))
 
 
+    # Error handling
     @unmute.error
-    async def unmute_error(self, ctx, error):
-        if isinstance(error, commands.MissingRole):
-            await throwError(ctx, "Permission Denied")
+    async def mute_error(self, ctx, error):
+        if c.debug:
+            await returnError(ctx, f"{error}")
         else:
-            await throwError(ctx, f"{error}")
+            await returnError(ctx, "Something went wrong")
 
-    # Ban/Unban system
-    #TODO
+
 
 async def setup(bot):
     await bot.add_cog(mutes(bot))
