@@ -33,12 +33,26 @@ ch = f"""```
     Example:
     >>> {prefix}mute @bad_guy 1d Saying bad words
 
-
 {prefix}unmute <@member>
     opposite of {prefix}mute, removes mute from a member
 
     Example:
     >>> {prefix}unmute @good_guy
+
+
+{prefix}ban <@member> <time>(Optional) <reason>(Optional)
+    Bans member for time(N+y/mo/d/h/m) with reason
+    If time doesn't specified, ban for 1mo
+    If reason doesn't specified, ban for "No Reason"
+
+    Example:
+    >>> {prefix}ban @notCool_guy 1y Not cool
+
+{prefix}unban <@member>
+    opposite of {prefix}ban, unbans a member
+
+    Example:
+    >>> {prefix}unban @cool_guy
 ```"""
 
 # Colors config

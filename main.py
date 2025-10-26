@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 import logging
-
 import config as c # `config.py`
 
 # Bot permissions, etc
@@ -27,6 +26,7 @@ async def on_ready():
 async def load_cogs():
     await bot.load_extension("cogs.info")
     await bot.load_extension("cogs.mutes")
+    await bot.load_extension("cogs.bans")
 
 # Run
 @bot.event
