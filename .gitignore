@@ -1,2 +1,11 @@
-.env
-*pycache*/
+*
+
+!.env-template.txt
+!config.py
+!cogs/init.py
+!main.py
+!README.md
+!requirements.txt
+!utils.py
+!cogs
+!cogs/*

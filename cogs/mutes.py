@@ -82,7 +82,7 @@ class mutes(commands.Cog):
             reason = "No Reason"
 
 
-        # If everythings seems good:
+        # If everything seems good:
 
         # Save {expires_at}, {reason} to json
         # Load the json

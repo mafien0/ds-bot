@@ -8,15 +8,12 @@ debug = True
 prefix = "."
 
 # File locations
+serinfo_loc = "data/serinfo.json"
 mutes_loc = "data/mutes.json"
 bans_loc = "data/bans.json"
-bans_loc = "data/bans.json"
 
-# From private config(`.env`)
 load_dotenv()
-TOKEN = os.getenv("DISCORD_TOKEN")        # Discord bot token
-GUILD_ID = int(os.getenv("GUILD_ID"))     # Server id
-MUTE_ROLE = int(os.getenv("MUTE_ROLE"))   # Role id for mutes
+TOKEN = str(os.getenv("TOKEN")) # Discord bot token
 
 # Commands Help text
 ch = f"""```
@@ -66,3 +63,4 @@ class color:
     error = red
     success = green
     punishment = yellow
+    warning = yellow

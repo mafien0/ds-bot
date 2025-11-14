@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import logging
-import config as c # `config.py`
+import config as c
 
 # Bot permissions, etc
 handler = logging.FileHandler(filename="data/discord.log", encoding="utf-8", mode="w")
@@ -24,6 +24,7 @@ async def on_ready():
 
 # Cogs
 async def load_cogs():
+    await bot.load_extension("cogs.init")
     await bot.load_extension("cogs.info")
     await bot.load_extension("cogs.mutes")
     await bot.load_extension("cogs.bans")

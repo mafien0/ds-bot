@@ -11,6 +11,14 @@ async def returnError(ctx, error: str,):
     await ctx.message.add_reaction("❌")
     await ctx.reply(embed=embed)
 
+async def addWarning(ctx, title: str, description: str):
+    embed = discord.Embed(
+        title=title,
+        description=description,
+        color=c.color.warning
+    )
+    await ctx.message.add_reaction("✅")
+    await ctx.reply(embed=embed)
 
 async def returnSuccess(ctx, action: str, description: str):
     embed = discord.Embed(
@@ -21,7 +29,6 @@ async def returnSuccess(ctx, action: str, description: str):
     await ctx.message.add_reaction("✅")
     await ctx.reply(embed=embed)
 
-
 async def sendDM(member, title: str, description: str):
         embed = discord.Embed(
             title=title,
@@ -30,6 +37,7 @@ async def sendDM(member, title: str, description: str):
         )
         try: await member.send(embed=embed)
         except: pass
+
 
 
 def parseTime(time_str: str):
