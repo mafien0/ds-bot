@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 import json
 import config as c
-from utils import returnError, returnSuccess, sendDM, parseTime
+from utils import return_error, return_success, send_dm, parse_time
 
 class mutes(commands.Cog):
     def __init__(self, bot):
@@ -61,16 +61,16 @@ class mutes(commands.Cog):
 
         # Permission check
         if not ctx.author.guild_permissions.administrator:
-            await returnError(ctx, "Permisson Denied!")
+            await return_error(ctx, "Permisson Denied!")
 
         # If doesn't specify member: error
         if not member:
-            await returnError(ctx, "Mute who?")
+            await return_error(ctx, "Mute who?")
             return
 
         # If member is yourself: error
         if ctx.author.id == member.id:
-            await returnError(ctx, "You can't mute yourself")
+            await return_error(ctx, "You can't mute yourself")
             return
 
         # If doesn't specify time: time = 10m
@@ -93,7 +93,7 @@ class mutes(commands.Cog):
             data = {}
 
         # Calculating unmute time
-        duration = parseTime(arg1)
+        duration = parse_time(arg1)
         expires_at = (datetime.now(timezone.utc) + duration).isoformat()
 
         # Storing it
@@ -102,12 +102,12 @@ class mutes(commands.Cog):
             json.dump(data, f, indent=4)
 
         # Feedback
-        await returnSuccess(ctx, "Mute", (
+        await return_success(ctx, "Mute", (
             f"Successfully muted {member.mention}\n"
             f"**Time:** {arg1}\n"
             f"**Reason:** {reason}"
         ))
-        await sendDM(member, "You got muted", (
+        await send_dm(member, "You got muted", (
             f"**By:** {ctx.author.mention}\n"
             f"**Time:** {arg1}\n"
             f"**Reason:** {reason}\n"
@@ -121,9 +121,9 @@ class mutes(commands.Cog):
     @mute.error
     async def mute_error(self, ctx, error):
         if c.debug:
-            await returnError(ctx, f"{error}")
+            await return_error(ctx, f"{error}")
         else:
-            await returnError(ctx, "Something went wrong")
+            await return_error(ctx, "Something went wrong")
 
 
     #* Unmute 
@@ -132,7 +132,7 @@ class mutes(commands.Cog):
 
         # Permission check
         if not ctx.author.guild_permissions.administrator:
-            returnError(ctx, "Permisson Denied!")
+            return_error(ctx, "Permisson Denied!")
             return
 
         # Removing mute role
@@ -147,10 +147,10 @@ class mutes(commands.Cog):
             json.dump(data, f, indent=4)
 
         # Feedback
-        await returnSuccess(ctx, "Unmute", (
+        await return_success(ctx, "Unmute", (
             f"Succefully unmuted {member.mention}"
         ))
-        await sendDM(member, "You got unmuted", (
+        await send_dm(member, "You got unmuted", (
             f"**By:** {ctx.author.mention}\n"
         ))
 
@@ -159,9 +159,9 @@ class mutes(commands.Cog):
     @unmute.error
     async def mute_error(self, ctx, error):
         if c.debug:
-            await returnError(ctx, f"{error}")
+            await return_error(ctx, f"{error}")
         else:
-            await returnError(ctx, "Something went wrong")
+            await return_error(ctx, "Something went wrong")
 
 
 

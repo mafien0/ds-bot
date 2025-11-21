@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 import json
 import config as c
-from utils import returnError, returnSuccess, sendDM, parseTime
+from utils import return_error, return_success, send_dm, parse_time
 
 class bans(commands.Cog):
     def __init__(self, bot):
@@ -58,16 +58,16 @@ class bans(commands.Cog):
 
         # Permission check
         if not ctx.author.guild_permissions.administrator:
-            await returnError(ctx, "Permisson Denied!")
+            await return_error(ctx, "Permisson Denied!")
 
         # If doesn't specify member: error
         if not member:
-            await returnError(ctx, "ban who?")
+            await return_error(ctx, "ban who?")
             return
 
         # If member is yourself: error
         if ctx.author.id == member.id:
-            await returnError(ctx, "You can't ban yourself")
+            await return_error(ctx, "You can't ban yourself")
             return
 
         # If doesn't specify time: time = 1mo
@@ -88,7 +88,7 @@ class bans(commands.Cog):
             data = {}
 
         # Calculating unban time
-        duration = parseTime(arg1)
+        duration = parse_time(arg1)
         expires_at = (datetime.now(timezone.utc) + duration).isoformat()
 
         # Storing it
@@ -97,12 +97,12 @@ class bans(commands.Cog):
             json.dump(data, f, indent=4)
 
         # Feedback
-        await returnSuccess(ctx, "Ban", (
+        await return_success(ctx, "Ban", (
             f"Successfully baned {member.mention}\n"
             f"**Time:** {arg1}\n"
             f"**Reason:** {reason}"
         ))
-        await sendDM(member, "You got baned", (
+        await send_dm(member, "You got baned", (
             f"**By:** {ctx.author.mention}\n"
             f"**Time:** {arg1}\n"
             f"**Reason:** {reason}\n"
@@ -115,16 +115,16 @@ class bans(commands.Cog):
     @ban.error
     async def ban_error(self, ctx, error):
         if c.debug:
-            await returnError(ctx, f"{error}")
+            await return_error(ctx, f"{error}")
         else:
-            await returnError(ctx, "Something went wrong")
+            await return_error(ctx, "Something went wrong")
 
 
     @commands.command()
     async def unban(self, ctx, user: discord.User):
         # Permission check
         if not ctx.author.guild_permissions.administrator:
-            await returnError(ctx, "Permission Denied!")
+            await return_error(ctx, "Permission Denied!")
             return
 
         guild = ctx.guild
@@ -147,7 +147,7 @@ class bans(commands.Cog):
                     break
         
         if not banned_user:
-            await returnError(ctx, f'User "{user}", not found')
+            await return_error(ctx, f'User "{user}", not found')
             return
 
         await guild.unban(banned_user)
@@ -160,12 +160,12 @@ class bans(commands.Cog):
             json.dump(data, f, indent=4)
 
         # Feedback
-        await returnSuccess(ctx, "Unban", (
+        await return_success(ctx, "Unban", (
             f"Successfully unbanned {user.mention}"
         ))
 
         try:
-            await sendDM(user, "You were unbanned", f"**By:** {ctx.author.mention}")
+            await send_dm(user, "You were unbanned", f"**By:** {ctx.author.mention}")
         except:
             pass
 
@@ -173,9 +173,9 @@ class bans(commands.Cog):
     @unban.error
     async def ban_error(self, ctx, error):
         if c.debug:
-            await returnError(ctx, f"{error}")
+            await return_error(ctx, f"{error}")
         else:
-            await returnError(ctx, "Something went wrong")
+            await return_error(ctx, "Something went wrong")
 
 async def setup(bot):
     await bot.add_cog(bans(bot))

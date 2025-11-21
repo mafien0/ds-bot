@@ -2,7 +2,7 @@ from dateutil.relativedelta import relativedelta
 import discord
 import config as c
 
-async def returnError(ctx, error: str,):
+async def return_error(ctx, error: str, ):
     embed = discord.Embed(
         title="Error",
         description=f"{error}",
@@ -11,7 +11,7 @@ async def returnError(ctx, error: str,):
     await ctx.message.add_reaction("❌")
     await ctx.reply(embed=embed)
 
-async def addWarning(ctx, title: str, description: str):
+async def add_warning(ctx, title: str, description: str):
     embed = discord.Embed(
         title=title,
         description=description,
@@ -20,7 +20,7 @@ async def addWarning(ctx, title: str, description: str):
     await ctx.message.add_reaction("✅")
     await ctx.reply(embed=embed)
 
-async def returnSuccess(ctx, action: str, description: str):
+async def return_success(ctx, action: str, description: str):
     embed = discord.Embed(
         title=action,
         description=description,
@@ -29,7 +29,7 @@ async def returnSuccess(ctx, action: str, description: str):
     await ctx.message.add_reaction("✅")
     await ctx.reply(embed=embed)
 
-async def sendDM(member, title: str, description: str):
+async def send_dm(member, title: str, description: str):
         embed = discord.Embed(
             title=title,
             description=description,
@@ -40,7 +40,7 @@ async def sendDM(member, title: str, description: str):
 
 
 
-def parseTime(time_str: str):
+def parse_time(time_str: str):
     # If starting not with number, num = 1
     try:
         num = int(time_str[:-1])
